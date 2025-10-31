@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat | Socket.io</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="./main.css">
+</head>
+<body>
+  <div class="login-container" id="loginContainer">
+    <div class="login-box">
+      <h1>Добро пожаловать в чат</h1>
+      <form class="login-form" id="loginForm">
+        <input 
+          type="text" 
+          id="usernameInput" 
+          class="login-input" 
+          placeholder="Введите ваше имя..." 
+          required 
+          minlength="2"
+          maxlength="20"
+          autocomplete="off"
+        />
+        <button type="submit" class="login-btn">Войти в чат</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="chat-container" id="chatContainer" style="display: none;">
+    <div class="chat-header">
+      <div>
+        <span>Вы: </span>
+        <span class="name">Anonymous</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Выйти</button>
+    </div>
+
+    <div class="chat-layout">
+      <div class="sidebar">
+        <div class="users-section">
+          <h3>Пользователи онлайн</h3>
+          <div class="users-header">
+            <button class="refresh-users-btn" id="refreshUsersBtn">Обновить список</button>
+          </div>
+          <ul class="users-list" id="usersList"></ul>
+        </div>
+        <div class="private-chats">
+          <h3>Приватные чаты</h3>
+          <ul class="private-chats-list" id="privateChatsList">
+            <li data-type="general">
+              <span>Общий чат</span>
+              <div class="chat-actions">
+                <span class="notification-badge" style="display: none;"></span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="group-chats">
+          <h3>Групповые чаты</h3>
+          <button id="createGroupBtn">Создать группу</button>
+          <button id="joinGroupBtn">Присоединиться</button>
+          <ul class="group-chats-list" id="groupChatsList"></ul>
+        </div>
+        <div class="room-participants" id="roomParticipants" style="display: none;">
+          <h3>Участники комнаты</h3>
+          <button id="changePasswordBtn">Сменить пароль</button>
+          <ul id="roomParticipantsList"></ul>
+        </div>
+      </div>
+
+      <div class="chat-main">
+        <div id="viewers" class="viewers"></div>
+        <ul class="messages"></ul>
+        <form class="form">
+          <input type="text" class="input" autocomplete="off" placeholder="Введите сообщение..." />
+          <button class="btn">Отправить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

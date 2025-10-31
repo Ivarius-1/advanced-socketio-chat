@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                  Int               @id @default(autoincrement())
+  name                String            @unique
+  online              Boolean           @default(false)
+  generalLastRead     DateTime          @default(now())
+
+  ownedRooms          PrivateRoom[]     @relation("Owner")
+  participatedRooms   PrivateRoom[]     @relation("Participant")
+  sentPrivateMessages Message[]         @relation("Sender")
+  receivedPrivateMessages Message[]     @relation("Receiver")
+  groupRoomUsers      GroupRoomUser[]
+  groupMessages       GroupMessage[]
+}
+
+model PrivateRoom {
+  id                  Int               @id @default(autoincrement())
+  ownerId             Int
+  participantId       Int
+  active              Boolean           @default(true)
+  ownerLastRead       DateTime?
+  participantLastRead DateTime?
+
+  owner               User              @relation("Owner", fields: [ownerId], references: [id])
+  participant         User              @relation("Participant", fields: [participantId], references: [id])
+  messages            Message[]
+}
+
+model Message {
+  id                  Int               @id @default(autoincrement())
+  content             String
+  senderId            Int
+  receiverId          Int
+  roomId              Int
+  createdAt           DateTime          @default(now())
+
+  sender              User              @relation("Sender", fields: [senderId], references: [id])
+  receiver            User              @relation("Receiver", fields: [receiverId], references: [id])
+  room                PrivateRoom       @relation(fields: [roomId], references: [id])
+}
+
+model GeneralMessage {
+  id                  Int               @id @default(autoincrement())
+  content             String
+  senderName          String
+  createdAt           DateTime          @default(now())
+}
+
+model GroupRoom {
+  id                  Int               @id @default(autoincrement())
+  name                String
+  password            String?
+  systemMessage       String?
+
+  users               GroupRoomUser[]
+  messages            GroupMessage[]
+}
+
+model GroupRoomUser {
+  groupRoomId         Int
+  userId              Int
+  role                String            
+  lastRead            DateTime          @default(now())
+  mutedUntil          DateTime?
+
+  groupRoom           GroupRoom         @relation(fields: [groupRoomId], references: [id])
+  user                User              @relation(fields: [userId], references: [id])
+
+  @@id([groupRoomId, userId])
+}
+
+model GroupMessage {
+  id                  Int               @id @default(autoincrement())
+  content             String
+  senderId            Int
+  groupRoomId         Int
+  createdAt           DateTime          @default(now())
+
+  sender              User              @relation(fields: [senderId], references: [id])
+  groupRoom           GroupRoom         @relation(fields: [groupRoomId], references: [id])
+}
